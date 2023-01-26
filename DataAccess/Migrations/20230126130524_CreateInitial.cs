@@ -58,6 +58,16 @@ namespace DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Companies",
+                columns: new[] { "Id", "CompanyName", "CompanyApproval", "OrderStartTime", "OrderEndTime" },
+                values: new object[] { 1, "Enoca", true, DateTime.Now.Subtract(new TimeSpan(5, 0, 0)), DateTime.Now.Add(new TimeSpan(5, 0, 0)) });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "CompanyId", "ProductName", "Stock", "Price" },
+                values: new object[] { 1, 1, "MobileApp", 42, 299.99f});
         }
 
         /// <inheritdoc />

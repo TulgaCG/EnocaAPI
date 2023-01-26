@@ -11,11 +11,9 @@ namespace EnocaAPI.Controllers
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;
-        private readonly IOrderService _orderService;
-        public CompanyController(IOrderService _orderService, ICompanyService companyService)
+        public CompanyController(ICompanyService companyService)
         {
             _companyService = companyService;
-            _orderService = _orderService;
         }
 
         [HttpGet("getcompanies")]
@@ -45,27 +43,6 @@ namespace EnocaAPI.Controllers
             }
         }
 
-        [HttpPost("addorder")]
-        public async Task<IActionResult> AddOrder(Order _order)
-        {
-            try
-            {
-                return Ok(await _orderService.CreateOrder(_order));
-            }
-            catch (CompanyNotApprovedException)
-            {
-                return BadRequest("Hata! Firma Onaylı Değil!");
-            }
-            catch (CompanyTimeOutOfRangeException)
-            {
-                return BadRequest("Firma şuan sipariş almıyor");
-            }
-            catch (Exception)
-            {
-                return BadRequest("Birşeyler ters gitti!");
-            }
-        }
-
         [HttpPut("updatecompany")]
         public async Task<IActionResult> UpdateCompany(Company _company)
         {
@@ -73,9 +50,9 @@ namespace EnocaAPI.Controllers
             {
                 return Ok(await _companyService.UpdateCompany(_company));
             }
-            catch (Exception)
+            catch (NotFoundException e)
             {
-                return BadRequest("Birşeyler ters gitti!");
+                return BadRequest(e.Message);
             }
         }
 

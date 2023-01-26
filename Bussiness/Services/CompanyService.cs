@@ -33,8 +33,8 @@ namespace Bussiness.Services
         {
             var _company = await _companyRep.Get(x => x.Id == company.Id);
             if (_company == null)
-                throw new NotFoundException();
-            _company.OrderEndTime = company.OrderStartTime;
+                throw new NotFoundException("Girilen firma bulunamadı!");
+            _company.OrderStartTime = company.OrderStartTime;
             _company.OrderEndTime = company.OrderEndTime;
             _company.CompanyApproval = company.CompanyApproval;
             return await _companyRep.Update(_company, _company.Id);

@@ -1,4 +1,5 @@
 ﻿using Bussiness.Services.IServices;
+using Bussiness.Utility.APIExceptions;
 using DataAccess.Repositories.IRepositories;
 using Entity;
 using System;
@@ -13,24 +14,33 @@ namespace Bussiness.Services
     {
         private readonly IOrderRepository _orderRep;
         private readonly ICompanyRepository _companyRep;
-        public OrderService(IOrderRepository orderRep, ICompanyRepository companyRep)
+        private readonly IProductRepository _productRep;
+        public OrderService(IOrderRepository orderRep, ICompanyRepository companyRep, IProductRepository productRepository)
         {
             _orderRep = orderRep;
             _companyRep = companyRep;
+            _productRep = productRepository;
         }
         public async Task<Order> CreateOrder(Order order)
         {
             var _company = await _companyRep.Get(x => x.Id == order.CompanyId);
+            var _product = await _productRep.Get(x => x.Id == order.ProductId);
+
+            if (_company == null)
+                throw new NotFoundException("Girilen firma bulunamadı!");
+            if (_product == null)
+                throw new NotFoundException("Girilen ürün bulunamadı!");
+            
             TimeSpan startTime = new TimeSpan(_company.OrderStartTime.Hour, _company.OrderStartTime.Minute, 0);
             TimeSpan endTime = new TimeSpan(_company.OrderEndTime.Hour, _company.OrderEndTime.Minute, 0);
 
             if ((DateTime.Now.TimeOfDay < startTime) && (DateTime.Now.TimeOfDay > endTime))
             {
-                // Error
+                throw new CompanyTimeOutOfRangeException();
             }
             else if (!_company.CompanyApproval)
             {
-                // Error
+                throw new CompanyNotApprovedException();
             }
 
             return await _orderRep.Add(order);

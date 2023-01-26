@@ -32,7 +32,10 @@ namespace DataAccess.Repositories
 
         public async Task<TEntity> Get(Expression<Func<TEntity, bool>> filter = null)
         {
-            return await _DataContext.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(filter);
+            var item = await _DataContext.Set<TEntity>().AsNoTracking().FirstOrDefaultAsync(filter);
+            if (item == null)
+                throw new Exception();
+            return item;
         }
 
         public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)

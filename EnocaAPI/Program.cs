@@ -6,6 +6,7 @@ using DataAccess.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using IoC;
+using EnocaAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
